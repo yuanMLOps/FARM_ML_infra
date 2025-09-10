@@ -6,4 +6,4 @@ data/
 **/processed/
 **/*.env
 **/*.tfvars
-**/*__pycache__/
+**/__pycache__/
