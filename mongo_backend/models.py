@@ -1,4 +1,4 @@
-from beanie import Document, Link
+from beanie import Document, Link, PydanticObjectId
 from pydantic import BaseModel, Field
 from typing import Optional, Literal
 from datetime import datetime
@@ -75,3 +75,31 @@ async def enrich_formulation(formulation: PreparationFormulation) -> list[Compou
     compound_ids = [entry.compound_id for entry in formulation.formulation]
     compounds = await Compound.find(Compound.compound_id.in_(compound_ids)).to_list()
     return compounds
+
+
+class User(Document):
+    username: str = Field(min_length=3, max_length=50)
+    password: str
+    email: str
+
+    created: datetime = Field(default_factory=datetime.now)
+
+    class Settings:
+        name = "user"
+            
+
+class RegisterUser(BaseModel):
+    username: str
+    password: str
+    email: str
+
+
+class LoginUser(BaseModel):
+    username: str
+    password: str
+
+
+class CurrentUser(BaseModel):
+    username: str
+    email: str
+    id: PydanticObjectId
