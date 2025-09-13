@@ -2,8 +2,9 @@ import motor.motor_asyncio
 from beanie import init_beanie, Document, PydanticObjectId
 
 from .config import BaseConfig
-from .models import Compound, PreparationFormulation, MLFormulation
-from typing import Optional, Union
+from .models import (Compound, PreparationFormulation, MLFormulation, 
+                     InputFormulation, CompoundEntry)
+from typing import Optional, Union 
 
 settings = BaseConfig()
 
@@ -31,13 +32,11 @@ async def insert_compounds(compound_list: list) -> dict[str, PydanticObjectId]:
 async def insert(input_dict: dict, model: Document, 
                       mapping_id_column: Optional[str]=None) -> Union[dict[str, PydanticObjectId], PydanticObjectId]:
     document = model(**input_dict) 
-    inserted_doc = await document.insert_one(document)
+    inserted_doc = await model.insert_one(document)
     if mapping_id_column:
         rs = {
             getattr(inserted_doc, mapping_id_column): PydanticObjectId(inserted_doc.id)            
             }
         return rs
     return inserted_doc.id
-
-
 

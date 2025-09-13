@@ -25,8 +25,7 @@ async def register(newUser: RegisterUser = Body(...)):
         )
 
     user = await User(**newUser.model_dump()).save()
-    print("Saved user:", user)
-
+    
     return user
 
 

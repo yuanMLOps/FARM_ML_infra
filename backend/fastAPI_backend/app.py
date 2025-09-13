@@ -8,6 +8,7 @@ from motor import motor_asyncio
 from mongo_backend import Compound, PreparationFormulation, MLFormulation, User
 
 from .routers import user as user_router
+from .routers import formulation as formulation_router
 
 settings = BaseConfig()
 print(settings.DB_URL, settings.DB_NAME)
@@ -32,7 +33,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 CORS(app) 
 
-app.include_router(user_router.router)
+app.include_router(user_router.router, prefix="/users", tags=["users"])
+app.include_router(formulation_router.router, prefix="/formulations", tags=["formulations"])
 
 @app.get("/", tags=["Root"])
 async def read_root() -> dict:
