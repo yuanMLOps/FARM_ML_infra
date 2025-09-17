@@ -3,6 +3,7 @@ from beanie import init_beanie
 
 from fastapi import FastAPI
 from fastapi_cors import CORS
+from fastapi.middleware.cors import CORSMiddleware
 from .config import BaseConfig
 from motor import motor_asyncio
 from mongo_backend import Compound, PreparationFormulation, MLFormulation, User
@@ -31,7 +32,16 @@ async def lifespan(app: FastAPI):
     app.client.close()
 
 app = FastAPI(lifespan=lifespan)
-CORS(app) 
+origins = ["*"]
+# CORS(app) 
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(user_router.router, prefix="/users", tags=["users"])
 app.include_router(formulation_router.router, prefix="/formulations", tags=["formulations"])
