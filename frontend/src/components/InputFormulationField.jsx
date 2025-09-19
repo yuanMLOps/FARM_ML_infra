@@ -1,7 +1,7 @@
 import React from 'react'
 
 const InputFormulationField = ( props ) => {
-  const { name, type, error, register } = props
+  const { name, type, error, register, required, step } = props
     return (
 
         <div className="mb-4">
@@ -13,6 +13,8 @@ const InputFormulationField = ( props ) => {
                 id={name}
                 name={name}
                 type={type}
+                required={required}
+                step={step ?? "any"}
                 placeholder={name}
               
                 autoComplete="off"

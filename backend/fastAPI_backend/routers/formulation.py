@@ -5,7 +5,7 @@ from beanie import PydanticObjectId
 from ..authentication import AuthHandler
 from mongo_backend import (PreparationFormulation, MLFormulation, CompoundEntry, 
                            Compound, ElementRatio, InputFormulation, PreparationFormulationListPagination,
-                           MLFormulationListPagination, UpdateFormulation)
+                           MLFormulationListPagination, UpdateFormulation, CompoundIDProjection)
 from Cheminfo_models import calculate_element_ratios_by_moles
 
 
@@ -46,9 +46,9 @@ async def add_formulation(input_form: InputFormulation=Body(...)):
         )
 
         if quantity_type == "weight_percent":
-            ml_quantity = quantity * 1000 / compound_doc.Molar_Mass
+            ml_quantity = (quantity / 100) * 1000 / compound_doc.Molar_Mass
         elif quantity_type == "volume_percent": 
-            ml_quantity = quantity * 1000 * compound_doc.Density / compound_doc.Molar_Mass
+            ml_quantity = (quantity /100) * 1000 * compound_doc.Density / compound_doc.Molar_Mass
         else:
             ml_quantity = quantity 
 
@@ -75,12 +75,19 @@ async def add_formulation(input_form: InputFormulation=Body(...)):
     element_ratio_calculated = calculate_element_ratios_by_moles(mole_list, smiles_list, solvent_list) 
     ml_element_ratio = ElementRatio(**element_ratio_calculated)
     
-    ml_form = MLFormulation(
-        preparation_id=prep_id,
-        description=input_form.description,
-        formulation=ml_formulation,
-        element_ratio=ml_element_ratio
-    )
+    ml_form_data ={
+        "preparation_id": prep_id,
+        "description": input_form.description,
+        "formulation": ml_formulation,
+        "element_ratio": ml_element_ratio,
+        "CE": input_form.CE, 
+        "LCE": input_form.LCE,
+        "cycle": input_form.cycle, 
+        "capacity": input_form.capacity, 
+        "current": input_form.current,       
+    }
+
+    ml_form = MLFormulation( **{k: v for k, v in ml_form_data.items() if v is not None} )
 
     saved_ml = await ml_form.save()
     return saved_ml
@@ -219,3 +226,9 @@ async def delete_formulation(prep_form_id: PydanticObjectId):
     await prep_form.delete()
     await ml_form.delete()
     
+
+@router.get("/compound_ids", response_model=list[str])
+async def get_compound_ids():
+    compounds = await Compound.find_all().project(CompoundIDProjection).to_list()
+    unique_ids = sorted({c.compound_id for c in compounds})
+    return list(unique_ids)

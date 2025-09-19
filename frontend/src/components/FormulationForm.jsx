@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../hooks/useAuth";
 import InputFormulationField from "../components/InputFormulationField";
-import InputCompound from "../components/InputCompound";
+import InputCompoundSelect from "../components/InputCompoundSelect";
+import InputCompoundHook from '../components/InputCompoundHook';
 
 const compoundSchema = z.object({
   compound_id: z.string().min(1),
@@ -18,7 +19,7 @@ const formulationSchema = z.object({
   formulation: z.array(compoundSchema).min(1),
   CE: z.coerce.number().gte(0).lte(100).optional(),
   LCE: z.coerce.number().gte(0).lte(10).optional(),
-  cycle: z.coerce.number().gt(0).optional(),
+  cycle: z.coerce.number().gte(0).optional(),
   current: z.coerce.number().gte(0).optional(),
   capacity: z.coerce.number().gte(0).optional()
 });
@@ -65,20 +66,85 @@ const FormulationForm = () => {
     }
   };
 
+  let formArray = [
+
+        {
+            name: "description",
+            type: "text",
+            error: errors.description,
+            required: true
+        },
+
+        {
+            name: "CE",
+            type: "number",
+            error: errors.CE,
+            step: 0.0001,
+            required: false
+        },
+        {
+            name: "LCE",
+            type: "number",
+            error: errors.LCE,
+            step: 0.01,
+            required: false
+        },
+        
+        {
+            name: "cycle",
+            type: "number",
+            error: errors.cycle,
+            required: false
+        },
+        {
+            name: "current",
+            type: "number",
+            step: 0.001,
+            error: errors.current,
+            required: false
+        },
+        {
+            name: "capacity",
+            type: "number",
+            step: 0.01,
+            error: errors.capacity,
+            required: false
+        },
+        
+
+    ]
+
   return (
     <form onSubmit={ handleSubmit(onSubmit, (errors) => console.log("Validation errors:", errors))}>
-      <h2>Insert New Car</h2>
+      <h2>Insert New Formulation</h2>
 
-      <InputFormulationField name="description" type="text" error={errors.description} register = {register} />
-      <InputFormulationField name="CE" type="number" error={errors.CE} register={register} />
+      {formArray.map((item) => (
+        <InputFormulationField 
+           key={item.name}
+           name={item.name}
+           type={item.type} 
+           error={item.error} 
+           register={register}
+           required={item.required}
+           {...(item.step !== undefined ? { step: item.step } : {})}
+
+           />
+
+       ) )
+      }
+
+      {/* <InputFormulationField name="description" type="text" error={errors.description} register = {register} />
+      <InputFormulationField name="CE" type="number" error={errors.CE} register={register} /> */}
 
       <h3>Compounds</h3>
       {fields.map((field, index) => (
-        <InputCompound
+        // <InputCompoundSelect
+        <InputCompoundHook
           key={field.id}
           index={index}
           register={register}
-          error={errors.compounds?.[index]}
+          control={control}
+          error={errors.formulation?.[index]}
           onDelete={() => remove(index)}
         />
       ))}

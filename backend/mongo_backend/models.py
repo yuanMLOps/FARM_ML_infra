@@ -20,6 +20,9 @@ class Compound(Document):
             IndexModel([("compound_id", 1)], unique=True)       
         ]
 
+class CompoundIDProjection(BaseModel):
+    compound_id: str = Field(...)        
+
 class CompoundEntry(BaseModel):
     compound: Link[Compound]
     compound_id: str
