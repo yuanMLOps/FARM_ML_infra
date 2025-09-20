@@ -7,6 +7,7 @@
  +  User authentication of React and FastAPI by JWT using localstorage on user's browser and user credentials stored in MongoDB
  +  Cheminformatics utility to calcuate the elemental ratios for each formulation using RDKit
  +  React.js frontend that allows users to login and manage MongoDB backend, and visualize data by D3.js and plotly.js
+                                 
 Components that will be added:
  + unit tests for frontend and backend
  + PCA of 13 element ratio features and data visualization of how the first two PCs are correlated to battery performance evaluated by CE
@@ -14,4 +15,5 @@ Components that will be added:
  + a Jenkinsfile that will automatically run unit tests and package frontend and backend code to docker images, and push to docker registry for deployment on K8s
  + RandomForest and XGBoost model training code to predict CE by elemental ratios with model registration to MLFlow after models are trained
  + Airflow code for scheduled model training
+
 
