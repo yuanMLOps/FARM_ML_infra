@@ -26,7 +26,8 @@ const RootLayout = () => {
                     <NavLink to="/login">Login</NavLink>
                     </>
                     }
-                    
+                    <NavLink to="/plotly-demo"> plotly Demo</NavLink> 
+                    <NavLink to="/D3-demo"> D3 Demo</NavLink> 
                 </div>
             </nav>
         </header>
