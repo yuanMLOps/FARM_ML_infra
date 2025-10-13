@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-app
+  namespace: farm
+  labels:
+    app: fastapi-app
+spec:
+  selector:
+    matchLabels:
+      app: fastapi-app
+  template:
+    metadata:
+      labels:
+        app: fastapi-app
+    spec:
+      containers:
+      - name: fastapi-app
+        image: huangyuan2000/fastapi-app:v1.0
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        env:
+        - name: TOKEN_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: TOKEN_SECRET
+              name: farm-token-secret
+        envFrom:
+        - configMapRef:
+            name: env-config    
+        ports:
+        - containerPort: 8000

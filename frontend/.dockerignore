@@ -1,0 +1,6 @@
+public
+node_modules
+**/.ipynb_checkpoints/
+**/*.ipynb
+**/*.env
+**/__pycache__/
