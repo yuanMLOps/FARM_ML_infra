@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: electrolyte-app
+  namespace: farm
+  labels:
+    app: electrolyte-app
+spec:
+  selector:
+    matchLabels:
+      app: electrolyte-app
+  template:
+    metadata:
+      labels:
+        app: electrolyte-app
+    spec:
+      containers:
+      - name: electrolyte-app
+        image: huangyuan2000/react-app-demo:v1.0
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "500m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
