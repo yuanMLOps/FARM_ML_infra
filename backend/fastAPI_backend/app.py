@@ -31,7 +31,7 @@ async def lifespan(app: FastAPI):
     yield
     app.client.close()
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(lifespan=lifespan, root_path="/fastapi")
 origins = ["*"]
 # CORS(app) 
 

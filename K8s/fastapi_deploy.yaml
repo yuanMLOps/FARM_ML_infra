@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: fastapi-app
-        image: huangyuan2000/fastapi-app:v1.0
+        image: huangyuan2000/fastapi-app:v1.1
         resources:
           requests:
             memory: "128Mi"
