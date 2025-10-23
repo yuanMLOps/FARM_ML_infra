@@ -13,5 +13,5 @@ RUN npm run build
 # serve the bundle with nginx
 FROM nginx:1.27.0
 
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html/webfront
 

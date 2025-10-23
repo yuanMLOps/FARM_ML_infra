@@ -18,3 +18,10 @@ spec:
             name: fastapi-app
             port: 
               number: 8000
+      - pathType: Prefix
+        path: /webfront
+        backend:
+          service:
+            name: electrolyte-app
+            port: 
+              number: 8080        
