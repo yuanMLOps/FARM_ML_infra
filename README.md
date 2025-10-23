@@ -9,6 +9,8 @@
  +  React.js frontend that allows users to login and manage MongoDB backend, and visualize data by D3.js and plotly.js
  +  Dockerfiles of frontend and backend for deployment
  +  K8s code to deploy frontend with nginx and backend with gunicorn/uvicorn services in prod system clusters
+ +  K8s ingress to expose frontend(react.js using /webfront prefix) and backend(fastapi using /fastapi prefix)
+ +  Communications between frontend and backend using backend ingress by /fastapi prefix. This is done by providing --build-arg http://<domain-name>/fastapi when building frontend docker image
                                  
 Components that will be added:
  + unit tests for frontend and backend
