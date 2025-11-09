@@ -4,8 +4,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class BaseConfig(BaseSettings):
-    DB_URL: Optional[str]
-    DB_NAME: Optional[str]
+    OPENAI_API_KEY: Optional[str]
+    VECTOR_DB: Optional[str]
     TOKEN_SECRET: Optional[str]
     
 

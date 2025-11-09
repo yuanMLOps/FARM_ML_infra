@@ -7,10 +7,11 @@ from fastapi import (
     UploadFile, Depends, Request, Body
     )
 from typing import Annotated
-from rag_process import pdf_text_extractor, vector_service
+from .rag_process import pdf_text_extractor, vector_service
 from .upload import save_file
-from .models import generate_text
-from .schemas import TextModelRequest, TextModelResponse
+from .schemas import RAGResponse, RAGRequest
+from .dependencies import get_generation
+from .graph import graph_app
 
 app = FastAPI()
 
@@ -41,14 +42,23 @@ async def file_upload_controller(
         )
     return {"filename": file.filename, "message": "File uploaded successfully"}
 
-@app.post("/generate/text", response_model_exclude_defaults=True)
-async def serve_text_to_text_controller(
-    request: Request,
-    body: TextModelRequest = Body(...),
-    urls_content: str = Depends(get_urls_content),
-    rag_content: str = Depends(get_rag_content),
-) -> TextModelResponse:
-    ...  # Raise HTTPException for invalid models
-    prompt = body.prompt + " " + urls_content + rag_content
-    output = await generate_text(body.prompt, body.temperature)
-    return TextModelResponse(content=output, ip=request.client.host)
+
+@app.post("/generate_text", response_model=RAGResponse)
+async def query_by_RAG_controller(generation: dict = Depends(get_generation)) -> RAGResponse:
+    # generation = await get_generation(input_request),
+
+    # try:
+    #     generation = await graph_app.ainvoke({"question":input_request.prompt})
+    #     quality = generation.get("quality", {})
+    #     return {
+    #         "answer": generation.get("generation", ""),
+    #         "hallucination_grade": quality.get("hallucination_grade", False),
+    #         "relavant_grade": quality.get("relavant_grade", False),
+    #         "num_orginial_documents": quality.get("num_document", 0)
+    #     }
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
+
+    return generation
+     
+   

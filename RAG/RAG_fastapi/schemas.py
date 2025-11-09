@@ -12,7 +12,7 @@ from pydantic import (
     HttpUrl,
 )
 
-SupportedTextModels: TypeAlias = Literal["gpt-3.5", "gpt-4"]
+SupportedTextModels: TypeAlias = Literal["gpt-3.5", "gpt-4o"]
 TokenCount = Annotated[int, Field(ge=0)]
 
 def count_tokens(text: str | None) -> int:
@@ -32,23 +32,12 @@ class ModelResponse(BaseModel):
     created_at: datetime = datetime.now()
 
 
-class TextModelRequest(BaseModel):
-    model: Literal["gpt-3.5-turbo", "gpt-4o"]
+class RAGRequest(BaseModel):
     prompt: str
-    temperature: float = 0.0
 
 
-class TextModelResponse(ModelResponse):
-    model: SupportedTextModels
-    temperature: Annotated[float, Field(ge=0.0, le=1.0, default=0.0)]
-    price: Annotated[float, Field(ge=0, default=0.0)]
-
-    @property
-    @computed_field
-    def tokens(self) -> TokenCount:
-        return count_tokens(self.content)
-
-    @property
-    @computed_field
-    def cost(self) -> float:
-        return self.price * self.tokens
+class RAGResponse(BaseModel):
+    answer: str
+    hallucination_grade: bool
+    relavant_grade: bool
+    num_orginial_documents: int
