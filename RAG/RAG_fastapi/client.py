@@ -1,6 +1,8 @@
 import requests
 import streamlit as st
 
+
+
 st.write("Upload a file to FastAPI")
 file = st.file_uploader("Choose a file", type=["pdf"])
 
@@ -27,11 +29,30 @@ if prompt := st.chat_input("Write your prompt in this input field"):
     with st.chat_message("user"):
         st.text(prompt)
 
+    if not st.session_state.messages:
+        question = prompt
+    else:
+        rephased_question = requests.post(
+            "http://localhost:8000/rephrase_question",
+            json={
+                "question": prompt,
+                "chat_history": st.session_state.messages
+                }
+        )
+        question = rephased_question.json()        
+
     response = requests.post(
         f"http://localhost:8000/generate_text", 
-        json={"prompt": prompt}
+        json={"prompt": question}
     )
     response.raise_for_status()
+    
+    response_json = response.json()
+    answer = response_json["answer"]
+    st.session_state.messages.append({"role": "assistant", "content": answer})
 
     with st.chat_message("assistant"):
-        st.markdown(response.text)
+        st.markdown(answer)
+
+    
+   

@@ -1,6 +1,6 @@
 from fastapi import Body, HTTPException
-from .graph import graph_app
-from .schemas import RAGRequest
+from .graph import graph_app, rephrase_question
+from .schemas import RAGRequest, RephraseRequest
 
 
 async def get_generation(body: RAGRequest=Body(...)) -> dict:
@@ -17,7 +17,9 @@ async def get_generation(body: RAGRequest=Body(...)) -> dict:
         raise HTTPException(status_code=500, detail=str(e))
 
     
-    # rag_content = await vector_service.search("knowledgebase", embed(body.prompt), 3, 0.7)
-    # rag_content_str = "\n".join([c.payload["original_text"] for c in rag_content])
-
-   
+async def generate_rephrased_question(body: RephraseRequest=Body(...)) -> str:
+    try:
+        rephrased_question = await rephrase_question(body.question, body.chat_history)
+        return rephrased_question
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

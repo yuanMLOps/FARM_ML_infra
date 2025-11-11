@@ -4,14 +4,13 @@ from fastapi import (
     HTTPException,
     status, 
     File, 
-    UploadFile, Depends, Request, Body
+    UploadFile, Depends
     )
 from typing import Annotated
 from .rag_process import pdf_text_extractor, vector_service
 from .upload import save_file
-from .schemas import RAGResponse, RAGRequest
-from .dependencies import get_generation
-from .graph import graph_app
+from .schemas import RAGResponse
+from .dependencies import get_generation, generate_rephrased_question
 
 app = FastAPI()
 
@@ -45,20 +44,11 @@ async def file_upload_controller(
 
 @app.post("/generate_text", response_model=RAGResponse)
 async def query_by_RAG_controller(generation: dict = Depends(get_generation)) -> RAGResponse:
-    # generation = await get_generation(input_request),
-
-    # try:
-    #     generation = await graph_app.ainvoke({"question":input_request.prompt})
-    #     quality = generation.get("quality", {})
-    #     return {
-    #         "answer": generation.get("generation", ""),
-    #         "hallucination_grade": quality.get("hallucination_grade", False),
-    #         "relavant_grade": quality.get("relavant_grade", False),
-    #         "num_orginial_documents": quality.get("num_document", 0)
-    #     }
-    # except Exception as e:
-    #     raise HTTPException(status_code=500, detail=str(e))
-
     return generation
+
+
+@app.post("/rephrase_question")
+async def rephrase_question_controller(rephrased_question: str = Depends(generate_rephrased_question)) -> str:
+    return rephrased_question
      
    

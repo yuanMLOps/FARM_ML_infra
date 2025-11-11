@@ -4,9 +4,7 @@ from langchain_core.documents import Document
 from pydantic import BaseModel, Field
 from langchain_openai import ChatOpenAI
 from ..config import BaseConfig
-import asyncio
 from dotenv import load_dotenv
-import os
 from langsmith.client import Client
 from langchain_core.output_parsers import StrOutputParser
 from langchain_tavily import TavilySearch
@@ -129,6 +127,22 @@ async def web_search(question: str) -> list[Document]:
 
     return documents
     
+
+async def rephrase_question(question: str, chat_history: list[dict[str, str]]) -> str:
+    chat_history_str = ""
+    for d in chat_history:
+        role = 'Human' if d["role"] == 'user' else 'AI'
+        chat_history_str += role + ":" + d["content"] + "\n"
+
+    llm = ChatOpenAI(api_key=api_key, model="gpt-4o", temperature=0)
+    hub_client = Client()
+    # prompt = hub_client.pull_prompt("langchain-ai/chat-langchain-rephrase")
+    prompt = hub_client.pull_prompt("joeywhelan/rephrase")
+    rephrase_chain = prompt | llm | StrOutputParser()
+    rephrased_question = await rephrase_chain.ainvoke({"chat_history": chat_history_str, "input": question})
+    return rephrased_question
+
+
 
 async def filter_documents(documents: list[Document], question) -> list[Document]:
     filtered_docs = []

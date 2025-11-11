@@ -34,6 +34,11 @@ class ModelResponse(BaseModel):
 
 class RAGRequest(BaseModel):
     prompt: str
+    
+
+class RephraseRequest(BaseModel):
+    question: str
+    chat_history: list[dict[str, str]]    
 
 
 class RAGResponse(BaseModel):

@@ -83,6 +83,7 @@ kantoku==0.18.1
 langchain==1.0.5
 langchain-core==1.0.4
 langchain-openai==1.0.2
+langchain-qdrant==1.1.0
 langchain-tavily==0.2.13
 langchain-text-splitters==1.0.0
 langgraph==1.0.2
