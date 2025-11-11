@@ -7,3 +7,4 @@ data/
 **/*.env
 **/*.tfvars
 **/__pycache__/
+**/qdrant_storage/** 
