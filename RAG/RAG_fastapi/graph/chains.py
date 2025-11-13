@@ -26,7 +26,7 @@ class GradeAnswer(BaseModel):
 
 async def answer_grader(question:str, answer:str) -> GradeAnswer:
 
-    llm = ChatOpenAI(api_key=api_key, model="gpt-4o", temperature=0)
+    llm = ChatOpenAI(api_key=api_key, model="gpt-4o-mini", temperature=0)
     structured_llm_grader = llm.with_structured_output(GradeAnswer)
 
     system="""You are a grader assessing whether an LLM generation addresses/resolves a question \n
@@ -46,7 +46,7 @@ async def answer_grader(question:str, answer:str) -> GradeAnswer:
 
 
 async def generate_answer(context_doc: list[Document], question: str) -> str:
-    llm = ChatOpenAI(api_key=api_key, model="gpt-4o", temperature=0)
+    llm = ChatOpenAI(api_key=api_key, model="gpt-4o-mini", temperature=0)
     hub_client = Client()
     prompt = hub_client.pull_prompt("rlm/rag-prompt")
     
@@ -65,7 +65,7 @@ class GradeHallucinations(BaseModel):
 
 async def hallucination_grader(context_docs: list[Document], generation: str) -> bool:
 
-    llm = ChatOpenAI(api_key=api_key, model="gpt-4o", temperature=0)
+    llm = ChatOpenAI(api_key=api_key, model="gpt-4o-mini", temperature=0)
     structured_llm_grader = llm.with_structured_output(GradeHallucinations)
 
     system = """You are a grader assessing whether an LLM generation is grounded in /
@@ -94,7 +94,7 @@ class GradeDocuments(BaseModel):
 
 async def retrieval_grader(document: Document, question: str):
 
-    llm = ChatOpenAI(api_key=api_key, model="gpt-4o", temperature=0)
+    llm = ChatOpenAI(api_key=api_key, model="gpt-4o-mini", temperature=0)
     structured_llm_grader = llm.with_structured_output(GradeDocuments)
 
     system = """You are a grader assessing relevance of a retrieved document to a user question. \n
@@ -134,7 +134,7 @@ async def rephrase_question(question: str, chat_history: list[dict[str, str]]) -
         role = 'Human' if d["role"] == 'user' else 'AI'
         chat_history_str += role + ":" + d["content"] + "\n"
 
-    llm = ChatOpenAI(api_key=api_key, model="gpt-4o", temperature=0)
+    llm = ChatOpenAI(api_key=api_key, model="gpt-4o-mini", temperature=0)
     hub_client = Client()
     # prompt = hub_client.pull_prompt("langchain-ai/chat-langchain-rephrase")
     prompt = hub_client.pull_prompt("joeywhelan/rephrase")

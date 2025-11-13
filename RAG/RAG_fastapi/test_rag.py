@@ -1,8 +1,7 @@
 import pytest
 from .rag_process import vector_service
-from .schemas import TextModelRequest
 from loguru import logger
-from .graph import (grade_answer, 
+from .graph import (answer_grader, 
                      generate_answer, 
                      retrieval_grader, 
                      hallucination_grader,
@@ -64,7 +63,7 @@ async def test_answer_yes() -> None:
     generated_answer = await generate_answer(searched_documents, prompt)
 
     is_fact_based = await hallucination_grader(searched_documents, generated_answer)
-    is_relavant = await grade_answer(prompt, generated_answer)
+    is_relavant = await answer_grader(prompt, generated_answer)
 
     assert is_fact_based and is_relavant  
 
@@ -77,7 +76,7 @@ async def test_answer_yes() -> None:
     generated_answer = await generate_answer(searched_documents, prompt)
 
     is_fact_based = await hallucination_grader(searched_documents, generated_answer)
-    is_relavant = await grade_answer("how to make a pizza", generated_answer)
+    is_relavant = await answer_grader("how to make a pizza", generated_answer)
 
     assert is_fact_based and not is_relavant  
 
@@ -89,7 +88,7 @@ async def test_web_search_yes() -> None:
     generated_answer = await generate_answer(web_doc, question)
 
     is_fact_based = await hallucination_grader(web_doc, generated_answer)
-    is_relavant = await grade_answer(question, generated_answer)
+    is_relavant = await answer_grader(question, generated_answer)
 
     assert is_fact_based and is_relavant  
 
@@ -101,7 +100,7 @@ async def test_web_search_no() -> None:
     generated_answer = await generate_answer(web_doc, question)
 
     is_fact_based = await hallucination_grader(web_doc, generated_answer)
-    is_relavant = await grade_answer("how to make a pizza", generated_answer)
+    is_relavant = await answer_grader("how to make a pizza", generated_answer)
 
     assert is_fact_based and not is_relavant      
 
