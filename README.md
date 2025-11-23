@@ -18,13 +18,13 @@
  + a langgraph workflow for information retrieval from vector database and internet search using several advanced RAG techniques to delivery validated answers
  + FastAPI that provide REST API endpoints to memorize and answer questions using the langchain RAG workflow
  + a streamlit that provide a chatbot frontend for users to ask questions
+ + PCA of 13 element ratio features and biplot data visualization of how the first two PCs are correlated to battery performance evaluated by LCE
+ + Model training of RandomForest and XGBoost models using optuna (bayesian based optimization) to predict LCE from electrolyte formulation using element ratio
                                  
 Components that will be added:
  + unit tests for frontend and backend
- + PCA of 13 element ratio features and data visualization of how the first two PCs are correlated to battery performance evaluated by CE
- + a Langgraph workflow that implement ReACT agent that can integrate the predictions of CE values and PCA bipolar plot information give an electrolyte composition. It should find out which tools to use in order to get prediction results.
+ + a Langgraph workflow that implement ReACT agent that can integrate the predictions of LCE values and PCA bipolar plot information give an electrolyte composition. It should find out which tools to use in order to get prediction results. The tools will be implemented by MCP server and langgraph's adapter class as MCP client
  + a Jenkinsfile that will automatically run unit tests and package frontend and backend code to docker images, and push to docker registry for deployment on K8s
- + RandomForest and XGBoost model training code to predict CE by elemental ratios with model registration to MLFlow after models are trained
  + Airflow or Jenkins pipelines for scheduled model training
 
 
