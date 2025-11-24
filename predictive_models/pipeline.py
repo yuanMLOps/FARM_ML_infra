@@ -1,7 +1,10 @@
 from sklearn.ensemble import RandomForestRegressor
 from xgboost.sklearn import XGBRegressor
 import pandas as pd
+from pandas import DataFrame
 import numpy as np
+
+from pymongo import MongoClient
 
 from sklearn.metrics import mean_squared_error
 
@@ -9,11 +12,35 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split, cross_val_score, KFold
 from sklearn.pipeline import Pipeline
+from .config import BaseConfig
 
 import optuna
 import pickle
 
 from .plots import plot_pred_vs_test
+
+settings = BaseConfig()
+DB_URL = settings.DB_URL
+DB_NAME = settings.DB_NAME
+DB_COLLECTION = settings.DB_COLLECTION
+
+def get_data() -> tuple[DataFrame, DataFrame, DataFrame, DataFrame]:
+    client = MongoClient(DB_URL)
+    db = client[DB_NAME]
+    collection = db[DB_COLLECTION] 
+
+    cursor = collection.find({}, { "element_ratio": 1, "LCE": 1})
+    df = pd.DataFrame(list(cursor))
+
+    element_df = pd.json_normalize(df["element_ratio"])
+    df = pd.concat([df.drop(columns=["element_ratio"]), element_df], axis=1)
+
+    df = df.query("LCE <2.31")
+    X, y = df.drop(columns=['LCE']), df['LCE']
+
+    train_X, test_X, train_y, test_y = train_test_split(X, y, test_size = 0.2)
+
+    return train_X, test_X, train_y, test_y
 
 
 def model_eval_RMSE(model, train_X, train_y, test_X, test_y) -> tuple[float, float]:
